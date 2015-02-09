@@ -9,7 +9,7 @@ This Library use Node Java. Make sure you have properly installed and configured
 
 Run  ** npm install opennlp **
 
-Opennlp comes with ** Apache OpenNLP 1.5.3. ** along with the following trained models ** (1.5 Series) **. 
+Opennlp comes with **Apache OpenNLP 1.5.3.** along with the following trained models **(1.5 Series)**. 
 
  * en-chunker.bin
  * en-ner-person.bin
