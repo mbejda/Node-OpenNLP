@@ -1,5 +1,6 @@
 NodeJs OpenNLP
 ===============
+[![NPM](https://travis-ci.org/mbejda/Node-OpenNLP.svg?branch=master)](https://nodei.co/npm/opennlp/)
 Apache OpenNLP wrapper for NodeJs <br>
 To learn more about Apache OpenNLP [Click Here](https://opennlp.apache.org). <br>
 
@@ -74,5 +75,4 @@ var options = {
 var o = new openNLP(options);
 ```
 [![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.svg)](https://gratipay.com/mbejda/)
-
 [![NPM](https://nodei.co/npm/opennlp.png)](https://nodei.co/npm/opennlp/)
