@@ -73,6 +73,6 @@ var options = {
 }
 var o = new openNLP(options);
 ```
-<img src="//img.shields.io/gratipay/mbejda.png">
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.svg)](https://gratipay.com/mbejda/)
 
 [![NPM](https://nodei.co/npm/opennlp.png)](https://nodei.co/npm/opennlp/)
