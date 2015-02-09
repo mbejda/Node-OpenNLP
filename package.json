@@ -1,0 +1,31 @@
+{
+  "name": "opennlp",
+  "version": "1.0.0",
+  "description": "Apache OpenNLP wrapper for Nodejs.",
+  "main": "opennlp.js",
+  "keywords": [
+    "java",
+    "opennlp",
+    "nlp",
+    "apache"
+  ],
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbejda/Node-OpenNLP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mbejda/Node-OpenNLP/issues"
+  },
+  "author": "Milos Bejda <mbejda@live.com> (tired.io)",
+  "license": "The MIT License (MIT)",
+  "dependencies": {
+    "extendy": "^1.0.1",
+    "java": "^0.4.5"
+  },
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  }
+}

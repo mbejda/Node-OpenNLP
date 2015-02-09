@@ -1,0 +1,214 @@
+var extendy = require('extendy')
+var openNLP = function(config) {
+	var self = this;
+	self.java = require('java');
+	self.models = {
+		posTagger: __dirname + '/en-pos-maxent.bin',
+		tokenizer: __dirname + '/en-token.bin',
+		nameFinder: __dirname + '/en-ner-person.bin',
+		sentenceDetector: __dirname + '/en-sent.bin',
+		chunker: __dirname + '/en-chunker.bin'
+	}
+	self.openNLP = {
+		jar: __dirname + "/lib/opennlp-tools-1.5.3.jar"
+	}
+	if (config && config.models) {
+		extendy(self.models, config.models);
+	}
+	if (config && config.openNLP) {
+		extendy(self.openNLP, config.openNLP);
+	}
+	self.java.classpath.push(self.openNLP.jar);
+	self.java.import('java.io.FileInputStream');
+	return {
+		tokenizer: {
+			tokenize: function(sentence, cb) {
+				return self.tokenizer(function(error, instance) {
+					return instance.tokenize(sentence, cb)
+				});
+			}
+		},
+		nameFinder: {
+			find: function(sentence, cb) {
+				var callback = function(cb,sentence, error, instance) {
+					if(error)
+					{
+						throw error;
+					}
+					if (typeof sentence === 'string') {
+						var sentence = sentence.split(' ');
+					}
+					var sentenceArray = self.java.newArray("java.lang.String", sentence);
+					return instance.find(sentenceArray, cb);
+				}
+				var newCallback = callback.bind(null, cb,sentence)
+				return self.nameFinder.call(self,newCallback)
+			}
+		},
+		sentenceDetector: ({
+			sentDetect: function(sentence, cb) {
+				return self.sentenceDetector(function(error, instance) {
+					return instance.sentDetect(sentence, cb);
+				});
+			}
+
+		},
+		posTagger: {
+			tag: function(sentence, cb) {
+				return self.posTagger(function(error, instance) {
+					if (typeof sentence == 'string') {
+						var sentence = sentence.split(' ');
+					}
+					var newArray = self.java.newArray("java.lang.String", sentence);
+					return instance.tag(newArray, cb);
+				});
+			}
+
+		},
+		chunker: {
+			chunk: function(sentence, tokens, cb) {
+				return self.chunker(function(error, instance) {
+					if (typeof sentence == 'string') {
+						var sentence = sentence.split(' ');
+					}
+					var javaSentence = self.java.newArray("java.lang.String", sentence);
+					var tokensArray = self.java.newArray("java.lang.String", tokens);
+					return instance.chunk(javaSentence, tokensArray, cb);
+				});
+			}
+
+		}
+
+	}
+}
+openNLP.prototype.tokenizer = function(cb) {
+	var self = this;
+	self.java.import('opennlp.tools.tokenize.TokenizerModel')
+	self.java.import('opennlp.tools.tokenize.TokenizerME');
+	self.java.newInstance('java.io.FileInputStream', self.models.tokenizer, function(err, fis) {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		self.java.newInstance('opennlp.tools.tokenize.TokenizerModel', fis, function(err, tokModel) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			self.java.newInstance('opennlp.tools.tokenize.TokenizerME', tokModel, cb)
+		})
+	});
+}
+openNLP.prototype.nameFinder = function(cb) {
+	var self = this;
+	self.java.import('opennlp.tools.namefind.TokenNameFinderModel')
+	self.java.import('opennlp.tools.namefind.NameFinderME')
+	return self.java.newInstance('java.io.FileInputStream', self.models.nameFinder, function(err, fis) {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		return self.java.newInstance('opennlp.tools.namefind.TokenNameFinderModel', fis, function(err, tokModel) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			return self.java.newInstance('opennlp.tools.namefind.NameFinderME', tokModel, cb)
+		});
+	})
+}
+openNLP.prototype.sentenceDetector = function(cb) {
+	var self = this;
+	self.java.import('opennlp.tools.sentdetect.SentenceModel')
+	self.java.import('opennlp.tools.sentdetect.SentenceDetector')
+	self.java.newInstance('java.io.FileInputStream', self.models.sentenceDetector, function(err, fis) {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		self.java.newInstance('opennlp.tools.sentdetect.SentenceModel', fis, function(err, tokModel) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			self.java.newInstance('opennlp.tools.sentdetect.SentenceDetectorME', tokModel, cb)
+		})
+	});
+}
+openNLP.prototype.posTagger = function(cb) {
+	var self = this;
+	self.java.import('opennlp.tools.postag.POSModel')
+	self.java.import('opennlp.tools.postag.POSTaggerME')
+	self.java.newInstance('java.io.FileInputStream', self.models.posTagger, function(err, fis) {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		self.java.newInstance('opennlp.tools.postag.POSModel', fis, function(err, tokModel) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			self.java.newInstance('opennlp.tools.postag.POSTaggerME', tokModel, cb)
+		})
+	});
+}
+openNLP.prototype.chunker = function(cb) {
+	var self = this;
+	self.java.import('opennlp.tools.chunker.ChunkerModel')
+	self.java.import('opennlp.tools.chunker.ChunkerME')
+	return self.java.newInstance('java.io.FileInputStream', self.models.chunker, function(err, fis) {
+		if (err) {
+			console.log(err);
+			return;
+		}
+		return self.java.newInstance('opennlp.tools.chunker.ChunkerModel', fis, function(err, tokModel) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			return self.java.newInstance('opennlp.tools.chunker.ChunkerME', tokModel, cb)
+		});
+	});
+}
+var nameFinder = new openNLP();
+/*var tokenizer = new openNLP().tokenizer;
+var sentenceDetector = new openNLP().sentenceDetector;
+var posTagger = new openNLP().posTagger;
+var chunker = new openNLP().chunker;
+
+*/
+
+var sentence = 'Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .';
+
+nameFinder.nameFinder.find('Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .', function(err, tokens_arr) {
+	for (var i = 0; i < tokens_arr.length; i++) {
+		console.log('token ' + i + ': ', tokens_arr[i].toString());
+	}
+});
+/*
+tokenizer.tokenize(sentence, function(err, tokens_arr) {
+	for (var i = 0; i < tokens_arr.length; i++) {
+		console.log('token ' + i + ': ', tokens_arr[i].toString());
+	}
+})
+console.log('sentence detector')
+sentenceDetector.sentDetect(sentence, function(err, tokens_arr) {
+	for (var i = 0; i < tokens_arr.length; i++) {
+		console.log('token ' + i + ': ', tokens_arr[i].toString());
+	}
+})
+
+
+
+posTagger.tag(sentence, function(err, tokens_arr) {
+	chunker.chunk(sentence, tokens_arr, function(err, tokens_arr) {
+		console.log(err)
+		console.log('HERE!!! ', tokens_arr)
+		for (var i = 0; i < tokens_arr.length; i++) {
+			console.log('token ' + i + ': ', tokens_arr[i].toString());
+		}
+	})
+})
+
+*/
