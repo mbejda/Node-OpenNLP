@@ -69,8 +69,8 @@ var openNLP = function(config) {
 				}.bind(null, sentence));
 			}
 
-		}
-
+		},
+		instance: self
 	}
 }
 openNLP.prototype.tokenizer = function(cb) {
@@ -154,5 +154,3 @@ openNLP.prototype.chunker = function(cb) {
 	});
 }
 module.exports = openNLP;
-
-

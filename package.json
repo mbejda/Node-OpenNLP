@@ -12,6 +12,9 @@
   "directories": {
     "doc": "docs"
   },
+  "scripts": {
+    "test": "jasmine-node spec/*Spec.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mbejda/Node-OpenNLP.git"
