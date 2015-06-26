@@ -7,7 +7,8 @@ var openNLP = function(config) {
 		tokenizer: __dirname + '/models/en-token.bin',
 		nameFinder: __dirname + '/models/en-ner-person.bin',
 		sentenceDetector: __dirname + '/models/en-sent.bin',
-		chunker: __dirname + '/models/en-chunker.bin'
+		chunker: __dirname + '/models/en-chunker.bin',
+		doccat: __dirname + '/models'
 	}
 	self.openNLP = {
 		jar: __dirname + "/lib/opennlp-tools-1.5.3.jar"
@@ -69,7 +70,7 @@ var openNLP = function(config) {
 				}.bind(null, sentence));
 			}
 		},
-    doccat: {
+		doccat: {
 			categorize: function(sentence, cb) {
 				return self.doccat(function(error, instance) {
 					if (typeof sentence == 'string') {
@@ -79,7 +80,7 @@ var openNLP = function(config) {
 					return instance.categorize(javaSentence, cb);
 				});
 			},
-      getBestCategory: function(outcome, cb) {
+			getBestCategory: function(outcome, cb) {
 				return self.doccat(function(double, error, instance) {
 					var javaDouble = self.java.newArray("double", outcome);
 					return instance.getBestCategory(javaDouble, cb);
@@ -169,20 +170,19 @@ openNLP.prototype.chunker = function(cb) {
 		});
 	});
 }
-
 openNLP.prototype.doccat = function(cb) {
 	var self = this;
 	self.java.import('opennlp.tools.doccat.DoccatModel')
-	self.java.import('opennlp.tools.doccat.DocumentCategorizerME')
-	self.java.newInstance('java.io.FileInputStream', self.models.doccat, function(err, fis) {
+	self.java.import('opennlp.tools.doccat.DocumentCategorizerME');
+	return self.java.newInstance('java.io.FileInputStream', self.models.doccat, function(err, fis) {
 		if (err) {
 			return cb(err);
 		}
-		self.java.newInstance('opennlp.tools.doccat.DoccatModel', fis, function(err, model) {
+		return self.java.newInstance('opennlp.tools.doccat.DoccatModel', fis, function(err, model) {
 			if (err) {
 				return cb(err);
 			}
-			self.java.newInstance('opennlp.tools.doccat.DocumentCategorizerME', model, cb)
+			return self.java.newInstance('opennlp.tools.doccat.DocumentCategorizerME', model, cb)
 		})
 	});
 }
