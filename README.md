@@ -49,6 +49,15 @@ posTagger.tag(sentence, function(err, tokens) {
 		console.log(results)
 	});
 });
+var doccat = new openNLP(options).doccat;
+doccat.categorize("I enjoyed watching Rocky", function(err, list) {
+	tagger.getBestCategory(list, function(err, category) {
+		console.log(category);
+	});
+})
+
+
+
 ```
 ## Instances:
 You can get the OpenNLP API instance through the instance parameter.
@@ -66,13 +75,21 @@ var options = {
 		tokenizer: __dirname + '/models/en-token.bin',
 		nameFinder: __dirname + '/models/en-ner-person.bin',
 		sentenceDetector: __dirname + '/models/en-sent.bin',
-		chunker: __dirname + '/models/en-chunker.bin'
+		chunker: __dirname + '/models/en-chunker.bin',
+		doccat: ''
 	},
 	openNLP = {
 		jar: __dirname + "/lib/opennlp-tools-1.5.3.jar"
 	}
 }
 var o = new openNLP(options);
+
 ```
+
+
+## Follow me on twitter ##
+http://twitter.com/notmilobejda
+
+
 [![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.svg)](https://gratipay.com/mbejda/)
 [![NPM](https://nodei.co/npm/opennlp.png)](https://nodei.co/npm/opennlp/)
