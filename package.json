@@ -1,6 +1,6 @@
 {
   "name": "opennlp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Apache OpenNLP wrapper for Nodejs.",
   "main": "opennlp.js",
   "keywords": [
@@ -25,8 +25,8 @@
   "author": "Milos Bejda <mbejda@live.com> (tired.io)",
   "license": "The MIT License (MIT)",
   "dependencies": {
-    "extendy": "^1.0.1",
-    "java": "^0.4.5"
+    "extendy": "1.0.1",
+    "java": "0.6.0"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5"
