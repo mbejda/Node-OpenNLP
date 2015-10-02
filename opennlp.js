@@ -34,7 +34,9 @@ var openNLP = function(config) {
 				self.nameFinder(function(sentence, error, instance) {
 					var sentence = sentence.split(' ');
 					var newArray = self.java.newArray("java.lang.String", sentence);
-					return instance.find(newArray, cb);
+					return instance.find(newArray, function(error,response){
+            cb(error,response.toString())
+          });
 				}.bind(null, sentence));
 			}
 		},
