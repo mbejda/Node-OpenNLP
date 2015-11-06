@@ -128,10 +128,13 @@ posTagger.tag(sentence, function(err, tokens_arr) {
     });
 });
 ```
-
-
-
-
+<hr>
+Please report any bugs. Feel free to send me a tweet if you need any help.
+<hr>
+Follow me on Twitter
+[@notmilobejda](https://twitter.com/notmilobejda)<br>
+My Blog
+[mbejda.com](https://mbejda.com)<br>
 
 [![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.svg)](https://gratipay.com/mbejda/)
 [![NPM](https://nodei.co/npm/opennlp.png)](https://nodei.co/npm/opennlp/)
