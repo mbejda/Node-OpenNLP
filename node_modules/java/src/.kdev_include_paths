@@ -1,0 +1,5 @@
+../node_modules/nan/
+/opt/jdk/include/
+/opt/node-v0.11.13/src/
+/opt/node-v0.11.13/deps/uv/include/
+/opt/node-v0.11.13/deps/v8/include/
