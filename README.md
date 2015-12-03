@@ -37,6 +37,27 @@ sentenceDetector.sentDetect(sentence, function(err, results) {
 	console.log(results)
 });
 ```
+
+### Configurations 
+The following default configurations can be overrided during initialization. 
+```
+var openNLP = require("opennlp");
+var opennlp = new openNLP({
+    models : {
+        doccat:__dirname + '/models/en-doccat.bin',
+        posTagger: __dirname + '/models/en-pos-maxent.bin',
+        tokenizer: __dirname + '/models/en-token.bin',
+        nameFinder: __dirname + '/models/en-ner-person.bin',
+        sentenceDetector: __dirname + '/models/en-sent.bin',
+        chunker: __dirname + '/models/en-chunker.bin'
+    },
+    openNLP = {
+        jar: __dirname + "/lib/opennlp-tools-1.6.0.jar"
+    }
+});
+
+```
+
 ### Tokenizer
 The OpenNLP Tokenizers segment an input character sequence into tokens. Tokens are usually words, punctuation, numbers, etc.
 
