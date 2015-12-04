@@ -40,7 +40,7 @@ sentenceDetector.sentDetect(sentence, function(err, results) {
 
 ### Configurations 
 The following default configurations can be overrided during initialization. 
-```
+```Javascript
 var openNLP = require("opennlp");
 var opennlp = new openNLP({
     models : {
@@ -95,7 +95,7 @@ The OpenNLP Document Categorizer can classify text into pre-defined categories. 
 
 
 ** To use the document categorizer you need to train a model first. The default trained model that is included is for testing purposes only. **
-```
+```Javascript
 var openNLP = require("opennlp");
 var doccat = new openNLP().doccat;
 doccat.categorize("I enjoyed watching Rocky", function(err, list) {
