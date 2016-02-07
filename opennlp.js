@@ -3,7 +3,7 @@ var openNLP = function(config) {
 	var self = this;
 	self.java = require('java');
 	self.models = {
-		doccat:__dirname + '/models/en-doccat.bin',
+		doccat: __dirname + '/models/en-doccat.bin',
 		posTagger: __dirname + '/models/en-pos-maxent.bin',
 		tokenizer: __dirname + '/models/en-token.bin',
 		nameFinder: __dirname + '/models/en-ner-person.bin',
@@ -23,7 +23,7 @@ var openNLP = function(config) {
 	self.java.import('java.io.FileInputStream');
 	return {
 		tokenizer: {
-			instance:null,
+			instance: null,
 			tokenize: function(sentence, cb) {
 				var that = this;
 				return self.tokenizer(function(error, instance) {
@@ -31,35 +31,48 @@ var openNLP = function(config) {
 					return instance.tokenize(sentence, cb)
 				});
 			},
-			getTokenProbabilities:function(cb){
-				if(this.instance == null){
-					 throw new Error('No instance found')
+			getTokenProbabilities: function(cb) {
+				if (this.instance == null) {
+					throw new Error('No instance found')
 				}
 				return this.instance.getTokenProbabilities(cb);
 			}
 		},
 		nameFinder: {
-			instance : null,
+			instance: null,
 			find: function(sentence, cb) {
 				var that = this;
-				self.nameFinder(function(sentence, error, instance) {
-					that.instance = instance;
-					var sentence = sentence.split(' ');
-					var newArray = self.java.newArray("java.lang.String", sentence);
-					return instance.find(newArray, function(error,response){
-            			cb(error,response.toString());
+				var getTokens = function(sentence, cb) {
+					self.tokenizer(function(sentence, error, instance) {
+						instance.tokenize(sentence, cb);
+					}.bind(null, sentence));
+				}
+				var nameFinder = function(error, sentenceTokens, cb) {
+					self.nameFinder(function(sentenceTokens, error, instance) {
+						that.instance = instance;
+						var newArray = self.java.newArray("java.lang.String", sentenceTokens);
+						return instance.find(newArray, function(error, response) {
+							cb(error, response.toString());
+						});
+					}.bind(null, sentenceTokens));
+				}
+				if (!Array.isArray(sentence)) {
+					getTokens(sentence, function(error, sentenceTokens) {
+						nameFinder(error, sentenceTokens, cb)
 					});
-				}.bind(null, sentence));
+				} else {
+					nameFinder(error, sentence, cb)
+				}
 			},
-			probs : function(cb){
-				if(this.instance == null){
+			probs: function(cb) {
+				if (this.instance == null) {
 					throw new Error('No instance found')
 				}
 				return this.instance.probs(cb)
 			}
 		},
 		sentenceDetector: {
-			instance : null,
+			instance: null,
 			sentDetect: function(sentence, cb) {
 				var that = this;
 				return self.sentenceDetector(function(sentence, error, instance) {
@@ -71,15 +84,15 @@ var openNLP = function(config) {
 				var that = this;
 				return self.sentenceDetector(function(sentence, error, instance) {
 					that.instance = instance;
-					return instance.sentPosDetect(sentence, function(error,spans){
-						cb(error,spans.toString())
+					return instance.sentPosDetect(sentence, function(error, spans) {
+						cb(error, spans.toString())
 					});
 				}.bind(null, sentence));
 			},
 
-	},
+		},
 		posTagger: {
-			instance : null,
+			instance: null,
 			tag: function(sentence, cb) {
 				var that = this;
 				return self.posTagger(function(sentence, error, instance) {
@@ -91,15 +104,15 @@ var openNLP = function(config) {
 					return instance.tag(newArray, cb);
 				}.bind(null, sentence));
 			},
-			probs : function(cb){
-				if(this.instance == null){
+			probs: function(cb) {
+				if (this.instance == null) {
 					throw new Error('No instance found')
 				}
-				this.instance.probs(function(error,response){
-					cb(error,response)
+				this.instance.probs(function(error, response) {
+					cb(error, response)
 				});
 			},
-			topKSequences : function(sentence,cb){
+			topKSequences: function(sentence, cb) {
 				var that = this;
 				return self.posTagger(function(sentence, error, instance) {
 					that.instance = instance;
@@ -107,20 +120,20 @@ var openNLP = function(config) {
 						var sentence = sentence.split(' ');
 					}
 					var newArray = self.java.newArray("java.lang.String", sentence);
-					return instance.topKSequences(newArray, function(error,sec){
-						cb(error,{
-							getOutcomes : function(){
-								return sec.map(function(item){
+					return instance.topKSequences(newArray, function(error, sec) {
+						cb(error, {
+							getOutcomes: function() {
+								return sec.map(function(item) {
 									return item.getOutcomesSync().toArraySync();
 								});
 							},
-							getProbs : function(){
-								return sec.map(function(item){
+							getProbs: function() {
+								return sec.map(function(item) {
 									return item.getProbsSync();
 								});
 							},
-							getScore : function(){
-								return sec.map(function(item){
+							getScore: function() {
+								return sec.map(function(item) {
 									return item.getScoreSync();
 								});
 							}
@@ -133,7 +146,7 @@ var openNLP = function(config) {
 
 		},
 		chunker: {
-			instance : null,
+			instance: null,
 			chunk: function(sentence, tokens, cb) {
 				var that = this;
 				return self.chunker(function(sentence, error, instance) {
@@ -146,53 +159,52 @@ var openNLP = function(config) {
 					return instance.chunk(javaSentence, tokensArray, cb);
 				}.bind(null, sentence));
 			},
-			probs : function(cb){
-				if(this.instance == null){
+			probs: function(cb) {
+				if (this.instance == null) {
 					throw new Error('No instance found')
 				}
-				this.instance.probs(function(error,response){
-					cb(error,response)
+				this.instance.probs(function(error, response) {
+					cb(error, response)
 				});
 			},
-			topKSequences : function(sentence,tags,cb){
+			topKSequences: function(sentence, tags, cb) {
 				var that = this;
-				return self.chunker(function(sentence,cb, error, instance) {
+				return self.chunker(function(sentence, cb, error, instance) {
 					that.instance = instance;
 					if (typeof sentence == 'string') {
 						var sentence = sentence.split(' ');
 					}
 					var newArray = self.java.newArray("java.lang.String", sentence);
-					return instance.topKSequences(newArray,tags, function(error,sec){
-						cb(error,{
-							getOutcomes : function(){
-								return sec.map(function(item){
+					return instance.topKSequences(newArray, tags, function(error, sec) {
+						cb(error, {
+							getOutcomes: function() {
+								return sec.map(function(item) {
 									return item.getOutcomesSync().toArraySync();
 								});
 							},
-							getProbs : function(){
-								return sec.map(function(item){
+							getProbs: function() {
+								return sec.map(function(item) {
 									return item.getProbsSync();
 								});
 							},
-							getScore : function(){
-								return sec.map(function(item){
+							getScore: function() {
+								return sec.map(function(item) {
 									return item.getScoreSync();
 								});
 							}
 						})
 
 					});
-				}.bind(null, sentence,cb));
+				}.bind(null, sentence, cb));
 			}
 		},
 		doccat: {
-			instance:null,
+			instance: null,
 			categorize: function(sentence, cb) {
 				var that = this;
-				return self.doccat(function(sentence,error, instance) {
+				return self.doccat(function(sentence, error, instance) {
 					that.instance = instance;
-					if(error)
-					{
+					if (error) {
 						throw new Error(error)
 					}
 
@@ -201,21 +213,21 @@ var openNLP = function(config) {
 					}
 					var javaSentence = self.java.newArray("java.lang.String", sentence);
 					instance.categorize(javaSentence, cb);
-				}.bind(null,sentence));
+				}.bind(null, sentence));
 			},
 			getBestCategory: function(outcome, cb) {
 				var that = this;
 				var javaDouble = self.java.newArray("double", outcome);
 				that.instance.getBestCategory(javaDouble, cb);
 			},
-			getIndex:function(category,cb){
+			getIndex: function(category, cb) {
 				return self.doccat(function(error, instance) {
-					instance.getIndex(category,cb);
+					instance.getIndex(category, cb);
 				});
 			},
-			getCategory:function(index,cb){
+			getCategory: function(index, cb) {
 				return self.doccat(function(error, instance) {
-					instance.getCategory(index,cb)
+					instance.getCategory(index, cb)
 				})
 			},
 			getAllResults: function(outcome, cb) {
@@ -225,31 +237,31 @@ var openNLP = function(config) {
 			},
 			sortedScoreMap: function(sentence, cb) {
 				var that = this;
-				return self.doccat(function(sentence,error, instance) {
-					instance.sortedScoreMap(sentence,function(error,hash){
-						try{
-							var json = (hash.toString().replace(/=/g,':'));
-						}catch(e){
-							return cb(e,hash.toString())
+				return self.doccat(function(sentence, error, instance) {
+					instance.sortedScoreMap(sentence, function(error, hash) {
+						try {
+							var json = (hash.toString().replace(/=/g, ':'));
+						} catch (e) {
+							return cb(e, hash.toString())
 						}
-						return cb(null,json)
+						return cb(null, json)
 
 					});
-				}.bind(null,sentence))
+				}.bind(null, sentence))
 			},
 			scoreMap: function(sentence, cb) {
 				var that = this;
-				return self.doccat(function(sentence,error, instance) {
-					instance.scoreMap(sentence,function(error,hash){
-						try{
-							var json = (hash.toString().replace(/=/g,':'));
-							}catch(e){
-							return cb(e,hash.toString())
+				return self.doccat(function(sentence, error, instance) {
+					instance.scoreMap(sentence, function(error, hash) {
+						try {
+							var json = (hash.toString().replace(/=/g, ':'));
+						} catch (e) {
+							return cb(e, hash.toString())
 						}
-						return cb(null,json)
+						return cb(null, json)
 
 					});
-				}.bind(null,sentence))
+				}.bind(null, sentence))
 			},
 		}
 	}
