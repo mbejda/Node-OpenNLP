@@ -27,7 +27,7 @@
   "license": "The MIT License (MIT)",
   "dependencies": {
     "extendy": "1.0.1",
-    "java": "0.8.0"
+    "java": "^0.8.0"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5"
