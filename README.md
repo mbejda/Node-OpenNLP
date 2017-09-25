@@ -66,12 +66,11 @@ var openNLP = require("opennlp");
 var sentence = 'Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .';
 var tokenizer = new openNLP().tokenizer;
 tokenizer.tokenize(sentence, function(err, results) {
-    console.log(err, results);
+    console.log(results);
     tokenizer.getTokenProbabilities(function(error, response) {
-            console.log(error, response
-            });
+            console.log(response);
     });
-})
+});
 ```
 
 ### Name Finder
