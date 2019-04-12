@@ -26,8 +26,8 @@
   "author": "Milos Bejda <mbejda@live.com> (mbejda.com)",
   "license": "The MIT License (MIT)",
   "dependencies": {
-    "extendy": "1.0.1",
-    "java": "0.6.0"
+    "extendy": "^1.0.1",
+    "java": "^0.11.0"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5"
